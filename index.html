@@ -3,155 +3,741 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Denis Health Sync</title>
-  <meta name="theme-color" content="#147b74" />
+  <title>Denis Health</title>
+  <meta name="theme-color" content="#3b82f6" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Denis Health" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <style>
-    :root { --bg:#f3f7f8; --card:rgba(255,255,255,.9); --text:#14222b; --muted:#6b7d87; --accent:#147b74; --accent-soft:#dff5f2; --line:rgba(20,34,43,.08); --shadow:0 10px 30px rgba(14,38,46,.08); --radius:24px; }
-    *{box-sizing:border-box} html,body{margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 0% 0%,#ebfbf6 0,transparent 35%),radial-gradient(circle at 100% 0%,#e8f3ff 0,transparent 38%),linear-gradient(180deg,#f5f9fa 0%,#eef4f5 100%);color:var(--text);min-height:100%}
-    .container{max-width:1180px;margin:0 auto;padding:22px 18px 100px}.hero{background:linear-gradient(135deg,rgba(20,123,116,.96),rgba(31,167,158,.92));color:white;border-radius:34px;padding:22px;box-shadow:0 18px 44px rgba(20,123,116,.18);position:relative;overflow:hidden}
-    .hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.09);pointer-events:none} .hero:before{width:220px;height:220px;top:-80px;right:-50px}.hero:after{width:140px;height:140px;bottom:-60px;right:110px}.header,.toolbar{position:relative;z-index:5}
-    h1{margin:0;font-size:clamp(28px,4vw,40px);line-height:1.04;letter-spacing:-.02em}.sub{color:rgba(255,255,255,.85);margin-top:10px;max-width:760px;line-height:1.5}
-    .header,.toolbar,.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}.btn{border:0;background:var(--accent);color:white;border-radius:16px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
-    .btn.ghost{background:rgba(255,255,255,.18);backdrop-filter:blur(10px);color:white}.btn.outline{background:transparent;border:1px solid var(--line);color:var(--text)}.btn.small{padding:10px 12px;border-radius:14px;font-size:13px}
-    .toolbar{margin-top:18px}.switches{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:white;color:var(--text);border:1px solid var(--line);cursor:pointer;font-weight:700}.pill.active{background:var(--accent);color:white;border-color:transparent}
-    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:18px 0}.card{background:var(--card);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.55);box-shadow:var(--shadow);border-radius:var(--radius)}.stat{padding:16px}
-    .label{color:var(--muted);font-size:13px;margin-bottom:8px}.value{font-weight:800;font-size:28px;letter-spacing:-.03em}.hint,.footer-note,.muted{color:var(--muted);font-size:12px}
-    .layout{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}.nav{position:sticky;top:16px;padding:16px}.nav h3{margin:4px 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-    .menu{display:flex;flex-direction:column;gap:8px}.menu button{text-align:left;width:100%;padding:14px 16px;border-radius:18px;border:1px solid transparent;background:transparent;color:var(--text);cursor:pointer;font-size:15px;font-weight:700}.menu button.active{background:linear-gradient(180deg,#ffffff,#f8fbfb);box-shadow:inset 0 0 0 1px var(--line), var(--shadow)}.menu .desc{display:block;font-size:12px;color:var(--muted);margin-top:5px;font-weight:500}
-    .content{display:flex;flex-direction:column;gap:18px}.section{padding:18px}.section-title{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.section-title h2{margin:0;font-size:24px;letter-spacing:-.02em}.section-title p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .quick-grid,.anal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.quick-action{padding:18px;border-radius:24px;background:linear-gradient(180deg,#ffffff,#f8fbfb);border:1px solid var(--line);box-shadow:var(--shadow)}.quick-action h4{margin:0 0 6px;font-size:18px}.quick-action p{margin:0 0 14px;color:var(--muted);font-size:14px}
-    .form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:8px}.field.wide{grid-column:span 3}.field label{font-size:13px;color:var(--muted);font-weight:700}
-    input,textarea,select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.95);border-radius:16px;padding:12px 14px;font:inherit;color:var(--text);outline:none}textarea{min-height:84px;resize:vertical}
-    .rows{display:flex;flex-direction:column;gap:12px}.entry{padding:14px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.62)}.entry-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}.entry-title{font-size:16px;font-weight:800}.entry-meta{color:var(--muted);font-size:13px}
-    .empty{padding:22px;border-radius:20px;background:linear-gradient(180deg,#fcfefe,#f6fbfb);border:1px dashed rgba(20,34,43,.14);color:var(--muted);text-align:center}.status{padding:12px 14px;border-radius:16px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--muted)}
-    @media (max-width:980px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.nav{position:static}.form-grid{grid-template-columns:1fr 1fr}.field.wide{grid-column:span 2}.quick-grid,.anal-grid{grid-template-columns:1fr}}
-    @media (max-width:640px){.container{padding:12px 12px 80px}.hero{border-radius:28px;padding:18px}.stats{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.field.wide{grid-column:span 1}.section-title,.entry-head{flex-direction:column;align-items:flex-start}}
+    :root{
+      --bg:#f4f9ff;
+      --bg2:#eef6ff;
+      --card:#ffffff;
+      --text:#16314f;
+      --muted:#6b85a6;
+      --primary:#4f9cff;
+      --primary-dark:#2d7eea;
+      --primary-soft:#e6f1ff;
+      --line:#d9e8fb;
+      --danger:#d94a4a;
+      --good:#1f9d63;
+      --shadow:0 10px 28px rgba(45,126,234,.10);
+      --radius:22px;
+      --radius-sm:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--bg),var(--bg2));
+      min-height:100vh;
+    }
+    .app{
+      max-width:760px;
+      margin:0 auto;
+      padding:18px 14px 90px;
+    }
+    .hero{
+      background:linear-gradient(135deg,#68adff,#4f9cff 60%, #2d7eea);
+      color:white;
+      border-radius:28px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::before,.hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.14);
+      pointer-events:none;
+    }
+    .hero::before{width:170px;height:170px;right:-50px;top:-60px}
+    .hero::after{width:120px;height:120px;right:40px;bottom:-55px}
+    h1{margin:0;font-size:30px;line-height:1.05}
+    .sub{margin-top:10px;font-size:14px;line-height:1.45;color:rgba(255,255,255,.92)}
+    .topbar{
+      display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:16px;
+      position:relative;z-index:2;
+    }
+    .btn,.seg button,.mini-btn{
+      border:none;cursor:pointer;font:inherit;
+    }
+    .seg{
+      display:inline-flex;
+      background:rgba(255,255,255,.18);
+      padding:4px;border-radius:999px;backdrop-filter:blur(8px);
+    }
+    .seg button{
+      padding:10px 14px;border-radius:999px;background:transparent;color:white;font-weight:700;
+    }
+    .seg button.active{background:white;color:var(--primary-dark)}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+    .mini-btn{
+      padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.18);color:white;font-size:13px;font-weight:700;
+      backdrop-filter:blur(8px);
+    }
+
+    .stats{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .stat{padding:14px}
+    .label{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .value{font-size:26px;font-weight:800;letter-spacing:-.02em}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+
+    .tabs{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px;
+    }
+    .tab{
+      background:white;border:1px solid var(--line);border-radius:18px;padding:12px 10px;text-align:center;font-weight:700;color:var(--text);
+      box-shadow:var(--shadow); font-size:13px;
+    }
+    .tab.active{background:var(--primary);color:white;border-color:var(--primary)}
+    .analyst-tabs{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;
+    }
+
+    .section{padding:16px;margin-top:14px}
+    .section h2{margin:0 0 6px;font-size:24px;line-height:1.08}
+    .section p.desc{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
+
+    .form-grid{display:grid;grid-template-columns:1fr;gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field label{font-size:13px;color:var(--muted);font-weight:700}
+    input,select,textarea{
+      width:100%;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px;font:inherit;color:var(--text);outline:none;
+    }
+    input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(79,156,255,.12)}
+    textarea{min-height:90px;resize:vertical}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+    .primary{
+      background:var(--primary);color:white;padding:12px 16px;border-radius:16px;font-weight:800;
+    }
+    .secondary{
+      background:white;color:var(--text);padding:12px 16px;border-radius:16px;border:1px solid var(--line);font-weight:800;
+    }
+    .danger{
+      background:#fff5f5;color:var(--danger);border:1px solid #ffd4d4;padding:10px 14px;border-radius:14px;font-weight:700;
+    }
+    .list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+    .entry{
+      border:1px solid var(--line);border-radius:18px;padding:12px;background:#fbfdff;
+    }
+    .entry-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .entry-title{font-weight:800;font-size:16px}
+    .entry-meta{font-size:12px;color:var(--muted);margin-top:4px}
+    .entry-note{margin-top:8px;font-size:13px;color:var(--text);line-height:1.4}
+    .empty{
+      padding:18px;border:1px dashed var(--line);border-radius:18px;background:#fafcff;color:var(--muted);text-align:center;
+    }
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{
+      background:var(--primary-soft);color:var(--primary-dark);padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700;
+    }
+    .status{
+      padding:12px 14px;border-radius:16px;background:#f9fbff;border:1px solid var(--line);font-size:13px;color:var(--muted);
+      line-height:1.4;
+    }
+    .success{color:var(--good)}
+    .warning{color:#bd7d00}
+    .footer-space{height:8px}
+
+    @media (min-width:700px){
+      .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .analyst-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .form-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="app">
     <div class="hero">
-      <div class="header">
-        <div><h1>Denis Health</h1><div class="sub">Версия с синхронизацией через Supabase. У Дениса — простой режим ввода, у тебя — режим анализа и управления синхронизацией.</div></div>
-        <div class="inline">
-          <button class="btn ghost small" id="installBtn" style="display:none">Установить на телефон</button>
-          <button class="btn ghost small" id="exportBtn">Экспорт JSON</button>
-          <button class="btn ghost small" id="importBtn">Импорт JSON</button>
-          <input type="file" id="importFile" accept="application/json" style="display:none">
-          <button class="btn ghost small" id="resetBtn">Сбросить всё</button>
+      <h1>Denis Health</h1>
+      <div class="sub">Новая мобильная версия: проще, стабильнее и удобнее. Голубая спокойная палитра вместо зелёной. У Дениса — быстрый ввод, у тебя — синхронизация и обзор.</div>
+      <div class="topbar">
+        <div class="seg">
+          <button data-mode="denis" class="active" type="button">Режим Дениса</button>
+          <button data-mode="analyst" type="button">Твой режим</button>
         </div>
-      </div>
-      <div class="toolbar">
-        <div class="switches">
-          <button class="pill active" data-mode="denis" type="button">Режим Дениса</button>
-          <button class="pill" data-mode="analyst" type="button">Твой режим</button>
+        <div class="toolbar">
+          <button id="installBtn" class="mini-btn" style="display:none" type="button">Установить</button>
+          <button id="exportBtn" class="mini-btn" type="button">Экспорт</button>
+          <button id="importBtn" class="mini-btn" type="button">Импорт</button>
+          <button id="resetBtn" class="mini-btn" type="button">Сброс</button>
+          <input id="importFile" type="file" accept="application/json" hidden>
         </div>
-        <div class="muted">Сначала синхронизацию настраиваешь только ты, в своём режиме.</div>
       </div>
     </div>
 
     <div class="stats">
-      <div class="card stat"><div class="label">Среднее давление</div><div class="value" id="statPressure">—</div><div class="hint">по всем записям</div></div>
-      <div class="card stat"><div class="label">Ккал сегодня</div><div class="value" id="statCalories">—</div><div class="hint">по сегодняшним записям</div></div>
-      <div class="card stat"><div class="label">Белок сегодня</div><div class="value" id="statProtein">—</div><div class="hint">граммы за сегодня</div></div>
-      <div class="card stat"><div class="label">Последний вес</div><div class="value" id="statWeight">—</div><div class="hint">из профиля</div></div>
-      <div class="card stat"><div class="label">Синхронизация</div><div class="value" id="statSync">—</div><div class="hint" id="statSyncHint">ещё не настроена</div></div>
+      <div class="card stat">
+        <div class="label">Среднее давление</div>
+        <div class="value" id="avgPressure">—</div>
+        <div class="hint">по внесённым записям</div>
+      </div>
+      <div class="card stat">
+        <div class="label">Ккал сегодня</div>
+        <div class="value" id="todayCalories">—</div>
+        <div class="hint">по еде за сегодня</div>
+      </div>
+      <div class="card stat">
+        <div class="label">Вес</div>
+        <div class="value" id="weightStat">—</div>
+        <div class="hint">из профиля</div>
+      </div>
+      <div class="card stat">
+        <div class="label">Синхронизация</div>
+        <div class="value" id="syncStat">Локально</div>
+        <div class="hint" id="syncHint">ещё не настроена</div>
+      </div>
     </div>
 
-    <div class="layout">
-      <aside class="card nav">
-        <h3>Навигация</h3>
-        <div class="menu" id="menu"></div>
-        <div class="footer-note">После настройки облака Денис сможет открыть ту же ссылку и ввести те же URL, anon key и room code.</div>
-      </aside>
-      <main class="content" id="content"></main>
-    </div>
+    <div id="navArea"></div>
+    <div id="screenArea"></div>
+    <div class="footer-space"></div>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-    const STORAGE_KEY='denis-health-sync-app-v1', CONFIG_KEY='denis-health-sync-config-v1';
-    const today=()=>new Date().toISOString().slice(0,10), nowTime=()=>new Date().toTimeString().slice(0,5), uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
-    const defaultState={mode:'denis',current:'home',profile:{name:'Денис',birthYear:'1971',height:'',weight:'',waist:'',notes:''},pressure:[],sleep:[],meals:[],symptoms:[],meds:[],labs:[]};
-    const defaultConfig={url:'',anonKey:'',roomCode:'',email:''};
-    let state=loadJson(STORAGE_KEY, defaultState), cfg=loadJson(CONFIG_KEY, defaultConfig), supabase=null, sessionEmail='', syncStatus='Локально';
-    function loadJson(k,f){try{const r=localStorage.getItem(k);return r?JSON.parse(r):structuredClone(f)}catch{return structuredClone(f)}} function saveJson(k,v){localStorage.setItem(k,JSON.stringify(v))} function saveAll(){saveJson(STORAGE_KEY,state);saveJson(CONFIG_KEY,cfg)}
-    function ensureClient(){ if(!cfg.url||!cfg.anonKey) return null; if(!supabase) supabase=createClient(cfg.url,cfg.anonKey); return supabase; }
-    async function refreshSession(){ const client=ensureClient(); if(!client){sessionEmail='';syncStatus='Локально';render();return;} const {data}=await client.auth.getSession(); sessionEmail=data.session?.user?.email||''; syncStatus=sessionEmail?'Подключено':'Нужен вход'; render(); }
-    function calcMealCalories(m){const c=Number(m.calories||0); return c||((Number(m.protein||0)*4)+(Number(m.fat||0)*9)+(Number(m.carbs||0)*4));}
-    function stats(){const p=state.pressure; const avg=p.length?{sys:Math.round(p.reduce((a,b)=>a+Number(b.sys||0),0)/p.length),dia:Math.round(p.reduce((a,b)=>a+Number(b.dia||0),0)/p.length)}:null; const mealsToday=state.meals.filter(x=>x.date===today()); return {avg,kcal:mealsToday.reduce((a,b)=>a+calcMealCalories(b),0),prot:mealsToday.reduce((a,b)=>a+Number(b.protein||0),0),sync:syncStatus,syncHint:sessionEmail?sessionEmail:(cfg.url?'ключи добавлены':'ещё не настроена')};}
-    function menuItems(){ if(state.mode==='denis') return [['home','Сегодня','Быстрый красивый ввод'],['pressure','Давление','Внести измерение'],['sleep','Сон','Сон, храп, сонливость'],['meals','Еда','Калории и БЖУ'],['symptoms','Самочувствие','Короткие жалобы']]; return [['sync','Синхронизация','Ключи, вход и облако'],['dashboard','Дашборд','Сводка и наблюдения'],['home','Быстрые действия','Для ручного ввода'],['pressure','Давление','Все записи давления'],['sleep','Сон','Наблюдения за сном'],['meals','Еда','Калории и БЖУ'],['symptoms','Самочувствие','Симптомы и эпизоды'],['profile','Профиль','Вес, рост, заметки'],['meds','Лекарства','Текущие препараты'],['labs','Анализы','Лабораторные данные']];}
-    function setState(updater){ state=typeof updater==='function'?updater(structuredClone(state)):updater; saveAll(); render(); }
-    function render(){ document.querySelectorAll('.pill').forEach(btn=>btn.classList.toggle('active',btn.dataset.mode===state.mode)); const s=stats(); document.getElementById('statPressure').textContent=s.avg?`${s.avg.sys}/${s.avg.dia}`:'—'; document.getElementById('statCalories').textContent=s.kcal?`${s.kcal}`:'—'; document.getElementById('statProtein').textContent=s.prot?`${s.prot}`:'—'; document.getElementById('statWeight').textContent=state.profile.weight?`${state.profile.weight} кг`:'—'; document.getElementById('statSync').textContent=s.sync; document.getElementById('statSyncHint').textContent=s.syncHint;
-      const menu=document.getElementById('menu'); menu.innerHTML=menuItems().map(([id,title,desc])=>`<button data-nav="${id}" class="${state.current===id?'active':''}">${title}<span class="desc">${desc}</span></button>`).join('');
-      document.getElementById('content').innerHTML=renderScreen();
-      menu.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>setState(s=>{s.current=b.dataset.nav;return s;}));
-      document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setState(s=>{s.mode=b.dataset.mode; s.current=s.mode==='denis'?'home':'sync'; return s;}));
-      wire();
-    }
-    function cardSection(title,subtitle,body){return `<section class="card section"><div class="section-title"><div><h2>${title}</h2><p>${subtitle||''}</p></div></div>${body}</section>`;}
-    function renderSync(){return cardSection('Синхронизация','Сначала ты настраиваешь ключи и облако на своём телефоне. Потом Денис использует те же URL, anon key и room code.',`<div class="quick-grid"><div class="quick-action"><h4>Шаг 1. Заполни ключи</h4><form id="syncForm" class="form-grid"><div class="field wide"><label>Supabase URL</label><input name="url" value="${escAttr(cfg.url)}" placeholder="https://...supabase.co"></div><div class="field wide"><label>Anon public key</label><textarea name="anonKey" placeholder="вставь anon key">${esc(cfg.anonKey)}</textarea></div><div class="field"><label>Room code</label><input name="roomCode" value="${escAttr(cfg.roomCode)}" placeholder="например denis-room"></div><div class="field"><label>Email для входа</label><input name="email" value="${escAttr(cfg.email)}" placeholder="твой email"></div><div class="field"><label>Состояние</label><div class="status">${esc(syncStatus)}${sessionEmail?` · ${esc(sessionEmail)}`:''}</div></div><div class="field wide"><button class="btn">Сохранить ключи</button></div></form></div><div class="quick-action"><h4>Шаг 2. Войти и связать облако</h4><p>Нажми «Отправить ссылку входа». Письмо придёт на email. Открой ссылку из письма и вернись в приложение.</p><div class="inline"><button class="btn" id="sendMagicBtn">Отправить ссылку входа</button><button class="btn outline" id="checkSessionBtn">Проверить вход</button></div><p style="margin-top:14px">Потом:</p><div class="inline"><button class="btn" id="saveCloudBtn">Сохранить данные в облако</button><button class="btn outline" id="loadCloudBtn">Загрузить данные из облака</button></div><div class="footer-note" id="syncMessage">После входа состояние сверху должно стать «Подключено».</div></div></div>`);}
-    function renderHome(){const note=state.mode==='denis'?'Здесь всё максимально просто. Нажимай нужный блок и заполняй данные без лишней путаницы.':'Здесь можно быстро добавить новые записи. Полная аналитика доступна на дашборде.'; return cardSection(state.mode==='denis'?'Сегодня':'Быстрые действия',note,`<div class="quick-grid"><div class="quick-action"><h4>Давление</h4><p>Записать измерение и пульс</p><button class="btn small" data-go="pressure">Открыть</button></div><div class="quick-action"><h4>Сон</h4><p>Добавить сон и сонливость</p><button class="btn small" data-go="sleep">Открыть</button></div><div class="quick-action"><h4>Еда</h4><p>Внести еду, БЖУ и калории</p><button class="btn small" data-go="meals">Открыть</button></div><div class="quick-action"><h4>Самочувствие</h4><p>Зафиксировать симптом</p><button class="btn small" data-go="symptoms">Открыть</button></div></div>`);}
-    function renderPressure(){const rows=[...state.pressure].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)); return cardSection('Давление','Верхнее, нижнее, пульс и краткая заметка.',`${pressureForm()}<div class="rows" style="margin-top:16px;">${rows.length?rows.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${r.sys||'—'}/${r.dia||'—'} · пульс ${r.pulse||'—'}</div><div class="entry-meta">${r.date||''} ${r.time||''}</div></div><button class="btn outline small" data-delete="pressure:${r.id}">Удалить</button></div>${r.notes?`<div class="footer-note">${esc(r.notes)}</div>`:''}</div>`).join(''):`<div class="empty">Пока нет записей давления.</div>`}</div>`);}
-    function pressureForm(){return `<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="pressure"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Время</label><input type="time" name="time" value="${nowTime()}"></div><div class="field"><label>Пульс</label><input name="pulse"></div><div class="field"><label>Верхнее давление</label><input name="sys"></div><div class="field"><label>Нижнее давление</label><input name="dia"></div><div class="field"><label>Таблетки</label><input name="medsTaken"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Сохранить давление</button></div></form>`;}
-    function renderSleep(){const rows=[...state.sleep].sort((a,b)=>(b.date).localeCompare(a.date)); return cardSection('Сон','Храп, сухость во рту и сонливость — важные данные для оценки апноэ сна.',`${sleepForm()}<div class="rows" style="margin-top:16px;">${rows.length?rows.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${r.date||''} · ${r.bedTime||'—'} → ${r.wakeTime||'—'}</div><div class="entry-meta">Сонливость: ${r.daySleepiness||'—'}/10</div></div><button class="btn outline small" data-delete="sleep:${r.id}">Удалить</button></div>${r.notes?`<div class="footer-note">${esc(r.notes)}</div>`:''}</div>`).join(''):`<div class="empty">Пока нет записей сна.</div>`}</div>`);}
-    function sleepForm(){return `<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="sleep"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Лёг</label><input type="time" name="bedTime" value="22:30"></div><div class="field"><label>Проснулся</label><input type="time" name="wakeTime" value="07:00"></div><div class="field"><label>Храп</label><select name="snoring"><option>не знаю</option><option>нет</option><option>да</option><option>сильно</option></select></div><div class="field"><label>Сухость во рту</label><select name="dryMouth"><option>нет</option><option>да</option></select></div><div class="field"><label>Сонливость 0-10</label><input name="daySleepiness"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Сохранить сон</button></div></form>`;}
-    function renderMeals(){const rows=[...state.meals].sort((a,b)=>(b.date).localeCompare(a.date)); return cardSection('Еда и калории','Можно ввести только БЖУ — калории посчитаются автоматически.',`${mealForm()}<div class="rows" style="margin-top:16px;">${rows.length?rows.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${esc(r.product||'Без названия')} · ${calcMealCalories(r)} ккал</div><div class="entry-meta">${r.date||''} · ${esc(r.meal||'Приём пищи')}</div></div><button class="btn outline small" data-delete="meals:${r.id}">Удалить</button></div></div>`).join(''):`<div class="empty">Пока нет записей по еде.</div>`}</div>`);}
-    function mealForm(){return `<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="meals"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Приём пищи</label><select name="meal"><option>Завтрак</option><option>Обед</option><option>Ужин</option><option>Перекус</option></select></div><div class="field"><label>Продукт</label><input name="product"></div><div class="field"><label>Граммы</label><input name="grams"></div><div class="field"><label>Белки</label><input name="protein"></div><div class="field"><label>Жиры</label><input name="fat"></div><div class="field"><label>Углеводы</label><input name="carbs"></div><div class="field"><label>Калории</label><input name="calories"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Сохранить еду</button></div></form>`;}
-    function renderSymptoms(){const rows=[...state.symptoms].sort((a,b)=>(b.date).localeCompare(a.date)); return cardSection('Самочувствие','Коротко фиксируй жалобы — это поможет увидеть повторяющиеся закономерности.',`${symptomForm()}<div class="rows" style="margin-top:16px;">${rows.length?rows.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${esc(r.symptom||'Симптом')} · ${r.severity||'—'}/10</div><div class="entry-meta">${r.date||''}</div></div><button class="btn outline small" data-delete="symptoms:${r.id}">Удалить</button></div></div>`).join(''):`<div class="empty">Пока нет записей по самочувствию.</div>`}</div>`);}
-    function symptomForm(){return `<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="symptoms"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Симптом</label><input name="symptom"></div><div class="field"><label>Сила (0-10)</label><input name="severity"></div><div class="field"><label>Длительность</label><input name="duration"></div><div class="field"><label>Триггер</label><input name="trigger"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Сохранить симптом</button></div></form>`;}
-    function renderProfile(){const p=state.profile; return cardSection('Профиль','Основные данные Дениса.',`<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="profile"><div class="form-grid"><div class="field"><label>Имя</label><input name="name" value="${escAttr(p.name)}"></div><div class="field"><label>Год рождения</label><input name="birthYear" value="${escAttr(p.birthYear)}"></div><div class="field"><label>Рост</label><input name="height" value="${escAttr(p.height)}"></div><div class="field"><label>Вес</label><input name="weight" value="${escAttr(p.weight)}"></div><div class="field"><label>Талия</label><input name="waist" value="${escAttr(p.waist)}"></div><div class="field wide"><label>Заметки</label><textarea name="notes">${esc(p.notes)}</textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Сохранить профиль</button></div></form>`);}
-    function renderMeds(){return cardSection('Лекарства','Актуальный список препаратов.',`<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="meds"><div class="form-grid"><div class="field"><label>Название</label><input name="name"></div><div class="field"><label>Доза</label><input name="dose"></div><div class="field"><label>Когда принимать</label><input name="time"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Добавить препарат</button></div></form><div class="rows" style="margin-top:16px;">${state.meds.length?state.meds.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${esc(r.name||'Препарат')}</div><div class="entry-meta">${esc(r.dose||'')} · ${esc(r.time||'')}</div></div><button class="btn outline small" data-delete="meds:${r.id}">Удалить</button></div></div>`).join(''):`<div class="empty">Пока список лекарств пуст.</div>`}</div>`);}
-    function renderLabs(){return cardSection('Анализы','Ключевые показатели для сравнения в динамике.',`<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="labs"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Анализ</label><input name="name"></div><div class="field"><label>Значение</label><input name="value"></div><div class="field"><label>Ед. изм.</label><input name="unit"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Добавить анализ</button></div></form><div class="rows" style="margin-top:16px;">${state.labs.length?state.labs.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${esc(r.name||'Анализ')} · ${esc(r.value||'')}</div><div class="entry-meta">${esc(r.unit||'')} · ${esc(r.date||'')}</div></div><button class="btn outline small" data-delete="labs:${r.id}">Удалить</button></div></div>`).join(''):`<div class="empty">Пока нет анализов.</div>`}</div>`);}
-    function renderDashboard(){const p=state.pressure.length,s=state.sleep.length; return cardSection('Дашборд','Краткая сводка по данным.',`<div class="anal-grid"><div class="quick-action"><h4>Что уже есть</h4><p>Давление: <b>${p}</b> записей<br>Сон: <b>${s}</b> записей<br>Еда: <b>${state.meals.length}</b> записей<br>Симптомы: <b>${state.symptoms.length}</b> записей</p></div><div class="quick-action"><h4>Следующий шаг</h4><p>Когда облако подключится, Денис сможет вносить данные со своего телефона, а ты будешь видеть ту же картину у себя.</p></div></div>`);}
-    function wire(){
-      document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=(e)=>{e.preventDefault();setState(s=>{s.current=b.dataset.nav;return s;});});
-      document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=(e)=>{e.preventDefault();setState(s=>{s.mode=b.dataset.mode;s.current=s.mode==='denis'?'home':'sync';return s;});});
-      document.querySelectorAll('[data-go]').forEach(btn=>btn.onclick=(e)=>{e.preventDefault();setState(s=>{s.current=btn.dataset.go;return s;});});
-      document.querySelectorAll('[data-delete]').forEach(btn=>btn.onclick=()=>{const [section,id]=btn.dataset.delete.split(':'); setState(s=>{s[section]=s[section].filter(x=>x.id!==id);return s;});});
-      bindForm('pressure',v=>setState(s=>{s.pressure.unshift({id:uid(),...v});return s;})); bindForm('sleep',v=>setState(s=>{s.sleep.unshift({id:uid(),...v});return s;})); bindForm('meals',v=>setState(s=>{s.meals.unshift({id:uid(),...v});return s;})); bindForm('symptoms',v=>setState(s=>{s.symptoms.unshift({id:uid(),...v});return s;})); bindForm('profile',v=>setState(s=>{s.profile=v;return s;})); bindForm('meds',v=>setState(s=>{s.meds.unshift({id:uid(),...v});return s;})); bindForm('labs',v=>setState(s=>{s.labs.unshift({id:uid(),...v});return s;}));
-      const syncForm=document.getElementById('syncForm'); if(syncForm) syncForm.onsubmit=(e)=>{e.preventDefault(); cfg=Object.fromEntries(new FormData(syncForm).entries()); supabase=null; saveAll(); syncStatus='Ключи сохранены'; render();};
-      const sendBtn=document.getElementById('sendMagicBtn'); if(sendBtn) sendBtn.onclick=async()=>{const client=ensureClient(); if(!client||!cfg.email) return setMessage('Сначала заполни URL, anon key и email.'); const {error}=await client.auth.signInWithOtp({email:cfg.email}); setMessage(error?`Ошибка: ${error.message}`:'Письмо со ссылкой для входа отправлено.');};
-      const checkBtn=document.getElementById('checkSessionBtn'); if(checkBtn) checkBtn.onclick=async()=>{await refreshSession(); setMessage(sessionEmail?`Вход подтверждён: ${sessionEmail}`:'Сессия пока не найдена. Открой письмо и перейди по ссылке.');};
-      const saveBtn=document.getElementById('saveCloudBtn'); if(saveBtn) saveBtn.onclick=saveCloud;
-      const loadBtn=document.getElementById('loadCloudBtn'); if(loadBtn) loadBtn.onclick=loadCloud;
-    }
-    function bindForm(name,handler){const form=document.querySelector(`form[data-form="${name}"]`); if(!form) return; form.onsubmit=(e)=>{e.preventDefault(); handler(Object.fromEntries(new FormData(form).entries())); form.reset(); if(name==='pressure'){form.date.value=today();form.time.value=nowTime();} if(name==='sleep'){form.date.value=today();form.bedTime.value='22:30';form.wakeTime.value='07:00';} if(name==='meals'||name==='symptoms'||name==='labs') form.date.value=today();};}
-    function setMessage(t){const el=document.getElementById('syncMessage'); if(el) el.textContent=t;}
-    async function saveCloud(){const client=ensureClient(); if(!client||!cfg.roomCode) return setMessage('Сначала сохрани ключи и room code.'); const {data}=await client.auth.getSession(); if(!data.session?.user) return setMessage('Сначала войди по email.'); const payload={room_code:cfg.roomCode,payload:state,updated_at:new Date().toISOString()}; const {error}=await client.from('health_data').upsert(payload,{onConflict:'room_code'}); if(error) return setMessage(`Ошибка сохранения: ${error.message}`); syncStatus='Подключено'; render(); setMessage('Данные сохранены в облако.');}
-    async function loadCloud(){const client=ensureClient(); if(!client||!cfg.roomCode) return setMessage('Сначала сохрани ключи и room code.'); const {data:rows,error}=await client.from('health_data').select('payload,updated_at').eq('room_code',cfg.roomCode).limit(1); if(error) return setMessage(`Ошибка загрузки: ${error.message}`); if(!rows||!rows.length) return setMessage('Пока нет данных в облаке. Сначала нажми «Сохранить данные в облако».'); state={...defaultState,...rows[0].payload}; saveAll(); render(); setMessage('Данные загружены из облака.');}
-    function esc(v=''){return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')} function escAttr(v=''){return esc(v)}
-    document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download='denis-health-data.json';a.click();URL.revokeObjectURL(url);};
-    document.getElementById('resetBtn').onclick=()=>{if(!confirm('Удалить все данные из этого браузера?')) return; state=structuredClone(defaultState); saveAll(); render();};
-    document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
-    document.getElementById('importFile').onchange=async()=>{const file=document.getElementById('importFile').files[0]; if(!file) return; try{state={...defaultState,...JSON.parse(await file.text())}; saveAll(); render();}catch{alert('Не удалось импортировать файл.')} document.getElementById('importFile').value='';};
-    let deferredPrompt=null; const installBtn=document.getElementById('installBtn'); window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-flex';}); installBtn.onclick=async()=>{if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display='none';}; window.addEventListener('appinstalled',()=>installBtn.style.display='none');
-    if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
-    document.addEventListener('click', (e) => {
-      const modeBtn = e.target.closest('[data-mode]');
-      if (modeBtn) {
-        e.preventDefault();
-        setState(s => { s.mode = modeBtn.dataset.mode; s.current = s.mode === 'denis' ? 'home' : 'sync'; return s; });
-        return;
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const DATA_KEY = 'denis-health-mobile-v2-data';
+const CFG_KEY = 'denis-health-mobile-v2-config';
+
+const today = () => new Date().toISOString().slice(0,10);
+const nowTime = () => new Date().toTimeString().slice(0,5);
+const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+const defaultData = {
+  mode:'denis',
+  denisScreen:'pressure',
+  analystScreen:'sync',
+  profile:{name:'Денис', birthYear:'1971', height:'', weight:'', waist:'', notes:''},
+  pressure:[],
+  sleep:[],
+  meals:[],
+  symptoms:[]
+};
+
+const defaultCfg = {
+  url:'',
+  anonKey:'',
+  roomCode:'',
+  email:''
+};
+
+let state = load(DATA_KEY, defaultData);
+let cfg = load(CFG_KEY, defaultCfg);
+let supabase = null;
+let sessionEmail = '';
+let syncMessage = 'Сначала вставь Supabase URL, anon key, room code и email.';
+
+function load(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : structuredClone(fallback);
+  }catch(e){
+    return structuredClone(fallback);
+  }
+}
+function saveAll(){
+  localStorage.setItem(DATA_KEY, JSON.stringify(state));
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+}
+function setState(mutator){
+  state = typeof mutator === 'function' ? mutator(structuredClone(state)) : mutator;
+  saveAll();
+  render();
+}
+function setCfg(mutator){
+  cfg = typeof mutator === 'function' ? mutator(structuredClone(cfg)) : mutator;
+  saveAll();
+  render();
+}
+function ensureClient(){
+  if(!cfg.url || !cfg.anonKey) return null;
+  if(!supabase) supabase = createClient(cfg.url, cfg.anonKey);
+  return supabase;
+}
+async function refreshSession(){
+  const client = ensureClient();
+  if(!client){
+    sessionEmail = '';
+    render();
+    return;
+  }
+  const { data } = await client.auth.getSession();
+  sessionEmail = data.session?.user?.email || '';
+  render();
+}
+function calcMealCalories(item){
+  const direct = Number(item.calories || 0);
+  if(direct) return direct;
+  return Number(item.protein||0)*4 + Number(item.fat||0)*9 + Number(item.carbs||0)*4;
+}
+function getStats(){
+  const p = state.pressure;
+  const avg = p.length ? {
+    sys: Math.round(p.reduce((s,x)=>s+Number(x.sys||0),0)/p.length),
+    dia: Math.round(p.reduce((s,x)=>s+Number(x.dia||0),0)/p.length)
+  } : null;
+  const mealsToday = state.meals.filter(x => x.date === today());
+  const kcal = mealsToday.reduce((s,x)=>s+calcMealCalories(x),0);
+  return {
+    avg,
+    kcal
+  };
+}
+function escapeHtml(s=''){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;');
+}
+function currentScreen(){
+  return state.mode === 'denis' ? state.denisScreen : state.analystScreen;
+}
+function syncStateLabel(){
+  if(sessionEmail) return 'Онлайн';
+  if(cfg.url && cfg.anonKey) return 'Ключи';
+  return 'Локально';
+}
+function render(){
+  document.querySelectorAll('[data-mode]').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode === state.mode);
+  });
+
+  const stats = getStats();
+  document.getElementById('avgPressure').textContent = stats.avg ? `${stats.avg.sys}/${stats.avg.dia}` : '—';
+  document.getElementById('todayCalories').textContent = stats.kcal ? String(stats.kcal) : '—';
+  document.getElementById('weightStat').textContent = state.profile.weight ? `${state.profile.weight} кг` : '—';
+  document.getElementById('syncStat').textContent = syncStateLabel();
+  document.getElementById('syncHint').textContent = sessionEmail ? sessionEmail : (cfg.url ? 'ключи сохранены' : 'ещё не настроена');
+
+  document.getElementById('navArea').innerHTML = state.mode === 'denis' ? renderDenisTabs() : renderAnalystTabs();
+  document.getElementById('screenArea').innerHTML = renderScreen();
+  wireDynamic();
+}
+function renderDenisTabs(){
+  const tabs = [
+    ['pressure','Давление'],
+    ['sleep','Сон'],
+    ['meals','Еда'],
+    ['symptoms','Самочувствие'],
+  ];
+  return `<div class="tabs">
+    ${tabs.map(([id,label])=>`<button type="button" class="tab ${state.denisScreen===id?'active':''}" data-screen="${id}">${label}</button>`).join('')}
+  </div>`;
+}
+function renderAnalystTabs(){
+  const tabs = [
+    ['sync','Синхронизация'],
+    ['dashboard','Обзор'],
+    ['profile','Профиль'],
+  ];
+  return `<div class="analyst-tabs">
+    ${tabs.map(([id,label])=>`<button type="button" class="tab ${state.analystScreen===id?'active':''}" data-screen="${id}">${label}</button>`).join('')}
+  </div>`;
+}
+function renderScreen(){
+  const scr = currentScreen();
+  if(scr === 'pressure') return renderPressure();
+  if(scr === 'sleep') return renderSleep();
+  if(scr === 'meals') return renderMeals();
+  if(scr === 'symptoms') return renderSymptoms();
+  if(scr === 'sync') return renderSync();
+  if(scr === 'dashboard') return renderDashboard();
+  if(scr === 'profile') return renderProfile();
+  return renderPressure();
+}
+function renderPressure(){
+  const rows = [...state.pressure].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+  return `<section class="card section">
+    <h2>Давление</h2>
+    <p class="desc">Самый важный экран для повседневного ввода. Всё максимально прямо и без путаницы.</p>
+    <form id="pressureForm" class="form-grid two">
+      <div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+      <div class="field"><label>Время</label><input type="time" name="time" value="${nowTime()}"></div>
+      <div class="field"><label>Верхнее</label><input name="sys" placeholder="например 145"></div>
+      <div class="field"><label>Нижнее</label><input name="dia" placeholder="например 92"></div>
+      <div class="field"><label>Пульс</label><input name="pulse" placeholder="например 78"></div>
+      <div class="field"><label>Лекарства</label><input name="meds" placeholder="что принял"></div>
+      <div class="field" style="grid-column:1/-1"><label>Комментарий</label><textarea name="notes" placeholder="как себя чувствовал"></textarea></div>
+      <div class="actions"><button class="primary" type="submit">Сохранить давление</button></div>
+    </form>
+    <div class="list">
+      ${rows.length ? rows.map(r=>`<div class="entry">
+        <div class="entry-head">
+          <div>
+            <div class="entry-title">${escapeHtml(r.sys||'—')}/${escapeHtml(r.dia||'—')} · пульс ${escapeHtml(r.pulse||'—')}</div>
+            <div class="entry-meta">${escapeHtml(r.date||'')} ${escapeHtml(r.time||'')}</div>
+          </div>
+          <button type="button" class="danger" data-delete="pressure:${r.id}">Удалить</button>
+        </div>
+        ${(r.notes||r.meds)?`<div class="entry-note">${escapeHtml(r.meds ? 'Лекарства: ' + r.meds + '. ' : '')}${escapeHtml(r.notes||'')}</div>`:''}
+      </div>`).join('') : '<div class="empty">Пока нет записей давления.</div>'}
+    </div>
+  </section>`;
+}
+function renderSleep(){
+  const rows = [...state.sleep].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<section class="card section">
+    <h2>Сон</h2>
+    <p class="desc">Сюда можно быстро заносить сон, храп и дневную сонливость.</p>
+    <form id="sleepForm" class="form-grid two">
+      <div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+      <div class="field"><label>Сонливость 0–10</label><input name="daySleepiness" placeholder="например 7"></div>
+      <div class="field"><label>Лёг спать</label><input type="time" name="bedTime" value="22:30"></div>
+      <div class="field"><label>Проснулся</label><input type="time" name="wakeTime" value="07:00"></div>
+      <div class="field"><label>Храп</label><select name="snoring"><option>не знаю</option><option>нет</option><option>да</option><option>сильно</option></select></div>
+      <div class="field"><label>Сухость во рту</label><select name="dryMouth"><option>нет</option><option>да</option></select></div>
+      <div class="field" style="grid-column:1/-1"><label>Комментарий</label><textarea name="notes"></textarea></div>
+      <div class="actions"><button class="primary" type="submit">Сохранить сон</button></div>
+    </form>
+    <div class="list">
+      ${rows.length ? rows.map(r=>`<div class="entry">
+        <div class="entry-head">
+          <div>
+            <div class="entry-title">${escapeHtml(r.date||'')} · ${escapeHtml(r.bedTime||'—')} → ${escapeHtml(r.wakeTime||'—')}</div>
+            <div class="entry-meta">Сонливость ${escapeHtml(r.daySleepiness||'—')}/10 · Храп: ${escapeHtml(r.snoring||'—')}</div>
+          </div>
+          <button type="button" class="danger" data-delete="sleep:${r.id}">Удалить</button>
+        </div>
+        ${r.notes?`<div class="entry-note">${escapeHtml(r.notes)}</div>`:''}
+      </div>`).join('') : '<div class="empty">Пока нет записей сна.</div>'}
+    </div>
+  </section>`;
+}
+function renderMeals(){
+  const rows = [...state.meals].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<section class="card section">
+    <h2>Еда</h2>
+    <p class="desc">Калории считаются автоматически по БЖУ, если ты не ввёл их вручную.</p>
+    <form id="mealForm" class="form-grid two">
+      <div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+      <div class="field"><label>Приём пищи</label><select name="meal"><option>Завтрак</option><option>Обед</option><option>Ужин</option><option>Перекус</option></select></div>
+      <div class="field"><label>Продукт / блюдо</label><input name="product"></div>
+      <div class="field"><label>Вес, г</label><input name="grams"></div>
+      <div class="field"><label>Белки</label><input name="protein"></div>
+      <div class="field"><label>Жиры</label><input name="fat"></div>
+      <div class="field"><label>Углеводы</label><input name="carbs"></div>
+      <div class="field"><label>Калории</label><input name="calories" placeholder="можно оставить пустым"></div>
+      <div class="field" style="grid-column:1/-1"><label>Комментарий</label><textarea name="notes"></textarea></div>
+      <div class="actions"><button class="primary" type="submit">Сохранить еду</button></div>
+    </form>
+    <div class="list">
+      ${rows.length ? rows.map(r=>`<div class="entry">
+        <div class="entry-head">
+          <div>
+            <div class="entry-title">${escapeHtml(r.product||'Без названия')} · ${calcMealCalories(r)} ккал</div>
+            <div class="entry-meta">${escapeHtml(r.date||'')} · ${escapeHtml(r.meal||'')}</div>
+          </div>
+          <button type="button" class="danger" data-delete="meals:${r.id}">Удалить</button>
+        </div>
+        <div class="chips">
+          ${r.grams?`<span class="chip">${escapeHtml(r.grams)} г</span>`:''}
+          ${r.protein?`<span class="chip">Б: ${escapeHtml(r.protein)}</span>`:''}
+          ${r.fat?`<span class="chip">Ж: ${escapeHtml(r.fat)}</span>`:''}
+          ${r.carbs?`<span class="chip">У: ${escapeHtml(r.carbs)}</span>`:''}
+        </div>
+      </div>`).join('') : '<div class="empty">Пока нет записей по еде.</div>'}
+    </div>
+  </section>`;
+}
+function renderSymptoms(){
+  const rows = [...state.symptoms].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<section class="card section">
+    <h2>Самочувствие</h2>
+    <p class="desc">Краткая фиксация жалоб без сложной медицинской терминологии.</p>
+    <form id="symptomForm" class="form-grid two">
+      <div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+      <div class="field"><label>Симптом</label><input name="symptom" placeholder="например одышка"></div>
+      <div class="field"><label>Сила 0–10</label><input name="severity"></div>
+      <div class="field"><label>Длительность</label><input name="duration"></div>
+      <div class="field"><label>Триггер</label><input name="trigger"></div>
+      <div class="field" style="grid-column:1/-1"><label>Комментарий</label><textarea name="notes"></textarea></div>
+      <div class="actions"><button class="primary" type="submit">Сохранить симптом</button></div>
+    </form>
+    <div class="list">
+      ${rows.length ? rows.map(r=>`<div class="entry">
+        <div class="entry-head">
+          <div>
+            <div class="entry-title">${escapeHtml(r.symptom||'Симптом')} · ${escapeHtml(r.severity||'—')}/10</div>
+            <div class="entry-meta">${escapeHtml(r.date||'')} · ${escapeHtml(r.duration||'')}</div>
+          </div>
+          <button type="button" class="danger" data-delete="symptoms:${r.id}">Удалить</button>
+        </div>
+        <div class="entry-note">${escapeHtml(r.trigger ? 'Триггер: ' + r.trigger + '. ' : '')}${escapeHtml(r.notes||'')}</div>
+      </div>`).join('') : '<div class="empty">Пока нет записей по самочувствию.</div>'}
+    </div>
+  </section>`;
+}
+function renderSync(){
+  return `<section class="card section">
+    <h2>Синхронизация</h2>
+    <p class="desc">Этот экран только для тебя. Сначала ты настраиваешь облако у себя, потом Денис вводит те же данные у себя.</p>
+    <form id="cfgForm" class="form-grid">
+      <div class="field"><label>Supabase URL</label><input name="url" value="${escapeHtml(cfg.url)}" placeholder="https://...supabase.co"></div>
+      <div class="field"><label>Anon public key</label><textarea name="anonKey" placeholder="вставь anon key">${escapeHtml(cfg.anonKey)}</textarea></div>
+      <div class="field"><label>Room code</label><input name="roomCode" value="${escapeHtml(cfg.roomCode)}" placeholder="например denis-room"></div>
+      <div class="field"><label>Email</label><input name="email" value="${escapeHtml(cfg.email)}" placeholder="твоя почта"></div>
+      <div class="actions">
+        <button class="primary" type="submit">Сохранить ключи</button>
+      </div>
+    </form>
+
+    <div class="status" style="margin-top:12px">
+      <b>Состояние:</b> ${escapeHtml(syncStateLabel())}${sessionEmail ? ` · <span class="success">${escapeHtml(sessionEmail)}</span>` : ''}<br>
+      ${escapeHtml(syncMessage)}
+    </div>
+
+    <div class="actions" style="margin-top:12px">
+      <button type="button" class="primary" id="sendMagicBtn">Отправить ссылку входа</button>
+      <button type="button" class="secondary" id="checkSessionBtn">Проверить вход</button>
+      <button type="button" class="secondary" id="saveCloudBtn">Сохранить в облако</button>
+      <button type="button" class="secondary" id="loadCloudBtn">Загрузить из облака</button>
+    </div>
+  </section>`;
+}
+function renderDashboard(){
+  const highPressure = state.pressure.filter(x => Number(x.sys)>=140 || Number(x.dia)>=90).length;
+  const sleepy = state.sleep.filter(x => Number(x.daySleepiness||0)>=7).length;
+  return `<section class="card section">
+    <h2>Обзор</h2>
+    <p class="desc">Простая аналитическая сводка. Без перегруза деталями.</p>
+    <div class="list">
+      <div class="entry">
+        <div class="entry-title">Основные цифры</div>
+        <div class="entry-note">
+          Давление: ${state.pressure.length} записей<br>
+          Сон: ${state.sleep.length} записей<br>
+          Еда: ${state.meals.length} записей<br>
+          Самочувствие: ${state.symptoms.length} записей
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-title">Что уже можно заметить</div>
+        <div class="entry-note">
+          Повышенное давление в записях: ${highPressure}<br>
+          Выраженная дневная сонливость: ${sleepy}<br>
+          Текущий статус синхронизации: ${escapeHtml(syncStateLabel())}
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-title">Следующий шаг</div>
+        <div class="entry-note">
+          После настройки облака и входа по email можно будет сохранять данные в базу и открывать ту же картину с другого телефона.
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+function renderProfile(){
+  return `<section class="card section">
+    <h2>Профиль</h2>
+    <p class="desc">Основные данные Дениса и твои заметки.</p>
+    <form id="profileForm" class="form-grid two">
+      <div class="field"><label>Имя</label><input name="name" value="${escapeHtml(state.profile.name||'')}"></div>
+      <div class="field"><label>Год рождения</label><input name="birthYear" value="${escapeHtml(state.profile.birthYear||'')}"></div>
+      <div class="field"><label>Рост, см</label><input name="height" value="${escapeHtml(state.profile.height||'')}"></div>
+      <div class="field"><label>Вес, кг</label><input name="weight" value="${escapeHtml(state.profile.weight||'')}"></div>
+      <div class="field"><label>Талия, см</label><input name="waist" value="${escapeHtml(state.profile.waist||'')}"></div>
+      <div class="field" style="grid-column:1/-1"><label>Заметки</label><textarea name="notes">${escapeHtml(state.profile.notes||'')}</textarea></div>
+      <div class="actions"><button type="submit" class="primary">Сохранить профиль</button></div>
+    </form>
+  </section>`;
+}
+function wireDynamic(){
+  document.querySelectorAll('[data-screen]').forEach(btn=>{
+    btn.onclick = (e)=>{
+      e.preventDefault();
+      if(state.mode === 'denis'){
+        setState(s=>{s.denisScreen = btn.dataset.screen; return s;});
+      }else{
+        setState(s=>{s.analystScreen = btn.dataset.screen; return s;});
       }
-      const navBtn = e.target.closest('[data-nav]');
-      if (navBtn) {
-        e.preventDefault();
-        setState(s => { s.current = navBtn.dataset.nav; return s; });
-        return;
-      }
-      const goBtn = e.target.closest('[data-go]');
-      if (goBtn) {
-        e.preventDefault();
-        setState(s => { s.current = goBtn.dataset.go; return s; });
-        return;
-      }
-    });
-    refreshSession(); render();
-  </script>
+    };
+  });
+
+  bindForm('pressureForm', values => setState(s=>{ s.pressure.unshift({id:uid(), ...values}); return s; }));
+  bindForm('sleepForm', values => setState(s=>{ s.sleep.unshift({id:uid(), ...values}); return s; }));
+  bindForm('mealForm', values => setState(s=>{ s.meals.unshift({id:uid(), ...values}); return s; }));
+  bindForm('symptomForm', values => setState(s=>{ s.symptoms.unshift({id:uid(), ...values}); return s; }));
+  bindForm('profileForm', values => setState(s=>{ s.profile = values; return s; }));
+  bindForm('cfgForm', values => {
+    supabase = null;
+    setCfg(values);
+    syncMessage = 'Ключи сохранены. Теперь можно отправить ссылку входа на email.';
+  });
+
+  document.querySelectorAll('[data-delete]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const [section,id] = btn.dataset.delete.split(':');
+      setState(s=>{ s[section] = s[section].filter(x=>x.id!==id); return s; });
+    };
+  });
+
+  const sendMagicBtn = document.getElementById('sendMagicBtn');
+  if(sendMagicBtn) sendMagicBtn.onclick = sendMagicLink;
+
+  const checkSessionBtn = document.getElementById('checkSessionBtn');
+  if(checkSessionBtn) checkSessionBtn.onclick = async ()=>{
+    await refreshSession();
+    syncMessage = sessionEmail ? 'Вход подтверждён.' : 'Сессия пока не найдена. Открой письмо и перейди по ссылке.';
+    render();
+  };
+
+  const saveCloudBtn = document.getElementById('saveCloudBtn');
+  if(saveCloudBtn) saveCloudBtn.onclick = saveCloud;
+
+  const loadCloudBtn = document.getElementById('loadCloudBtn');
+  if(loadCloudBtn) loadCloudBtn.onclick = loadCloud;
+}
+function bindForm(id, handler){
+  const form = document.getElementById(id);
+  if(!form) return;
+  form.onsubmit = (e)=>{
+    e.preventDefault();
+    const values = Object.fromEntries(new FormData(form).entries());
+    handler(values);
+    form.reset();
+    if(id === 'pressureForm'){ form.date.value = today(); form.time.value = nowTime(); }
+    if(id === 'sleepForm'){ form.date.value = today(); form.bedTime.value = '22:30'; form.wakeTime.value = '07:00'; }
+    if(id === 'mealForm'){ form.date.value = today(); }
+    if(id === 'symptomForm'){ form.date.value = today(); }
+  };
+}
+
+async function sendMagicLink(){
+  const client = ensureClient();
+  if(!client || !cfg.email){
+    syncMessage = 'Сначала заполни ключи и email.';
+    render();
+    return;
+  }
+  const { error } = await client.auth.signInWithOtp({ email: cfg.email });
+  syncMessage = error ? `Ошибка: ${error.message}` : 'Письмо со ссылкой входа отправлено.';
+  render();
+}
+
+async function saveCloud(){
+  const client = ensureClient();
+  if(!client || !cfg.roomCode){
+    syncMessage = 'Сначала сохрани ключи и room code.';
+    render();
+    return;
+  }
+  const { data } = await client.auth.getSession();
+  if(!data.session?.user){
+    syncMessage = 'Сначала войди по email.';
+    render();
+    return;
+  }
+  const payload = {
+    room_code: cfg.roomCode,
+    payload: state,
+    updated_at: new Date().toISOString()
+  };
+  const { error } = await client.from('health_data').upsert(payload, { onConflict:'room_code' });
+  syncMessage = error ? `Ошибка сохранения: ${error.message}` : 'Данные сохранены в облако.';
+  render();
+}
+
+async function loadCloud(){
+  const client = ensureClient();
+  if(!client || !cfg.roomCode){
+    syncMessage = 'Сначала сохрани ключи и room code.';
+    render();
+    return;
+  }
+  const { data, error } = await client.from('health_data').select('payload').eq('room_code', cfg.roomCode).limit(1);
+  if(error){
+    syncMessage = `Ошибка загрузки: ${error.message}`;
+    render();
+    return;
+  }
+  if(!data || !data.length){
+    syncMessage = 'В облаке пока нет данных. Сначала нажми "Сохранить в облако".';
+    render();
+    return;
+  }
+  state = { ...structuredClone(defaultData), ...data[0].payload };
+  saveAll();
+  syncMessage = 'Данные загружены из облака.';
+  render();
+}
+
+document.querySelectorAll('[data-mode]').forEach(btn=>{
+  btn.onclick = (e)=>{
+    e.preventDefault();
+    setState(s=>{ s.mode = btn.dataset.mode; return s; });
+  };
+});
+
+document.getElementById('exportBtn').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'denis-health-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+document.getElementById('importBtn').onclick = ()=> document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = async ()=>{
+  const f = document.getElementById('importFile').files[0];
+  if(!f) return;
+  try{
+    state = { ...structuredClone(defaultData), ...JSON.parse(await f.text()) };
+    saveAll();
+    syncMessage = 'Данные импортированы.';
+    render();
+  }catch(e){
+    alert('Не удалось импортировать файл.');
+  }
+  document.getElementById('importFile').value = '';
+};
+document.getElementById('resetBtn').onclick = ()=>{
+  if(!confirm('Удалить все локальные данные приложения на этом устройстве?')) return;
+  state = structuredClone(defaultData);
+  saveAll();
+  syncMessage = 'Локальные данные сброшены.';
+  render();
+};
+
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-flex';
+});
+installBtn.onclick = async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+};
+window.addEventListener('appinstalled', ()=> installBtn.style.display = 'none');
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+refreshSession();
+render();
+</script>
 </body>
 </html>
