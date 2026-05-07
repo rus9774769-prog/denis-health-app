@@ -47,8 +47,8 @@
       </div>
       <div class="toolbar">
         <div class="switches">
-          <button class="pill active" data-mode="denis">Режим Дениса</button>
-          <button class="pill" data-mode="analyst">Твой режим</button>
+          <button class="pill active" data-mode="denis" type="button">Режим Дениса</button>
+          <button class="pill" data-mode="analyst" type="button">Твой режим</button>
         </div>
         <div class="muted">Сначала синхронизацию настраиваешь только ты, в своём режиме.</div>
       </div>
@@ -109,9 +109,9 @@
     function renderLabs(){return cardSection('Анализы','Ключевые показатели для сравнения в динамике.',`<form class="card" style="padding:14px;border-radius:22px;background:linear-gradient(180deg,#fff,#f9fbfb);" data-form="labs"><div class="form-grid"><div class="field"><label>Дата</label><input type="date" name="date" value="${today()}"></div><div class="field"><label>Анализ</label><input name="name"></div><div class="field"><label>Значение</label><input name="value"></div><div class="field"><label>Ед. изм.</label><input name="unit"></div><div class="field wide"><label>Комментарий</label><textarea name="notes"></textarea></div></div><div class="inline" style="margin-top:14px;"><button class="btn">Добавить анализ</button></div></form><div class="rows" style="margin-top:16px;">${state.labs.length?state.labs.map(r=>`<div class="entry"><div class="entry-head"><div><div class="entry-title">${esc(r.name||'Анализ')} · ${esc(r.value||'')}</div><div class="entry-meta">${esc(r.unit||'')} · ${esc(r.date||'')}</div></div><button class="btn outline small" data-delete="labs:${r.id}">Удалить</button></div></div>`).join(''):`<div class="empty">Пока нет анализов.</div>`}</div>`);}
     function renderDashboard(){const p=state.pressure.length,s=state.sleep.length; return cardSection('Дашборд','Краткая сводка по данным.',`<div class="anal-grid"><div class="quick-action"><h4>Что уже есть</h4><p>Давление: <b>${p}</b> записей<br>Сон: <b>${s}</b> записей<br>Еда: <b>${state.meals.length}</b> записей<br>Симптомы: <b>${state.symptoms.length}</b> записей</p></div><div class="quick-action"><h4>Следующий шаг</h4><p>Когда облако подключится, Денис сможет вносить данные со своего телефона, а ты будешь видеть ту же картину у себя.</p></div></div>`);}
     function wire(){
-      document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>setState(s=>{s.current=b.dataset.nav;return s;}));
-      document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setState(s=>{s.mode=b.dataset.mode;s.current=s.mode==='denis'?'home':'sync';return s;}));
-      document.querySelectorAll('[data-go]').forEach(btn=>btn.onclick=()=>setState(s=>{s.current=btn.dataset.go;return s;}));
+      document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=(e)=>{e.preventDefault();setState(s=>{s.current=b.dataset.nav;return s;});});
+      document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=(e)=>{e.preventDefault();setState(s=>{s.mode=b.dataset.mode;s.current=s.mode==='denis'?'home':'sync';return s;});});
+      document.querySelectorAll('[data-go]').forEach(btn=>btn.onclick=(e)=>{e.preventDefault();setState(s=>{s.current=btn.dataset.go;return s;});});
       document.querySelectorAll('[data-delete]').forEach(btn=>btn.onclick=()=>{const [section,id]=btn.dataset.delete.split(':'); setState(s=>{s[section]=s[section].filter(x=>x.id!==id);return s;});});
       bindForm('pressure',v=>setState(s=>{s.pressure.unshift({id:uid(),...v});return s;})); bindForm('sleep',v=>setState(s=>{s.sleep.unshift({id:uid(),...v});return s;})); bindForm('meals',v=>setState(s=>{s.meals.unshift({id:uid(),...v});return s;})); bindForm('symptoms',v=>setState(s=>{s.symptoms.unshift({id:uid(),...v});return s;})); bindForm('profile',v=>setState(s=>{s.profile=v;return s;})); bindForm('meds',v=>setState(s=>{s.meds.unshift({id:uid(),...v});return s;})); bindForm('labs',v=>setState(s=>{s.labs.unshift({id:uid(),...v});return s;}));
       const syncForm=document.getElementById('syncForm'); if(syncForm) syncForm.onsubmit=(e)=>{e.preventDefault(); cfg=Object.fromEntries(new FormData(syncForm).entries()); supabase=null; saveAll(); syncStatus='Ключи сохранены'; render();};
@@ -131,6 +131,26 @@
     document.getElementById('importFile').onchange=async()=>{const file=document.getElementById('importFile').files[0]; if(!file) return; try{state={...defaultState,...JSON.parse(await file.text())}; saveAll(); render();}catch{alert('Не удалось импортировать файл.')} document.getElementById('importFile').value='';};
     let deferredPrompt=null; const installBtn=document.getElementById('installBtn'); window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-flex';}); installBtn.onclick=async()=>{if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display='none';}; window.addEventListener('appinstalled',()=>installBtn.style.display='none');
     if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+    document.addEventListener('click', (e) => {
+      const modeBtn = e.target.closest('[data-mode]');
+      if (modeBtn) {
+        e.preventDefault();
+        setState(s => { s.mode = modeBtn.dataset.mode; s.current = s.mode === 'denis' ? 'home' : 'sync'; return s; });
+        return;
+      }
+      const navBtn = e.target.closest('[data-nav]');
+      if (navBtn) {
+        e.preventDefault();
+        setState(s => { s.current = navBtn.dataset.nav; return s; });
+        return;
+      }
+      const goBtn = e.target.closest('[data-go]');
+      if (goBtn) {
+        e.preventDefault();
+        setState(s => { s.current = goBtn.dataset.go; return s; });
+        return;
+      }
+    });
     refreshSession(); render();
   </script>
 </body>
