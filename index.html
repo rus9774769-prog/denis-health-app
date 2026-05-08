@@ -152,6 +152,17 @@
     .warning{color:#bd7d00}
     .footer-space{height:8px}
 
+
+    .report-day{border:1px solid var(--line);border-radius:18px;padding:12px;background:#fbfdff;margin-top:10px}
+    .report-day h3{margin:0 0 10px;font-size:18px}
+    .report-grid{display:grid;grid-template-columns:1fr;gap:8px}
+    .report-block{background:white;border:1px solid var(--line);border-radius:14px;padding:10px}
+    .report-block b{display:block;margin-bottom:4px}
+    .report-small{font-size:13px;color:var(--muted);line-height:1.45}
+    .flag{color:#b45309;font-weight:800}
+    .bad{color:var(--danger);font-weight:800}
+    @media (min-width:700px){.report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
     @media (min-width:700px){
       .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
       .tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -164,7 +175,7 @@
   <div class="app">
     <div class="hero">
       <h1>Denis Health</h1>
-      <div class="sub">Контроль здоровья.</div>
+      <div class="sub">Новая мобильная версия: проще, стабильнее и удобнее. Голубая спокойная палитра вместо зелёной. У Дениса — быстрый ввод, у тебя — синхронизация и обзор.</div>
       <div class="topbar">
         <div class="seg">
           <button data-mode="denis" class="active" type="button">Режим Дениса</button>
@@ -344,6 +355,7 @@ function renderAnalystTabs(){
   const tabs = [
     ['sync','Синхронизация'],
     ['dashboard','Обзор'],
+    ['report','Отчёт'],
     ['profile','Профиль'],
   ];
   return `<div class="analyst-tabs">
@@ -358,6 +370,7 @@ function renderScreen(){
   if(scr === 'symptoms') return renderSymptoms();
   if(scr === 'sync') return renderSync();
   if(scr === 'dashboard') return renderDashboard();
+  if(scr === 'report') return renderReport();
   if(scr === 'profile') return renderProfile();
   return renderPressure();
 }
@@ -510,6 +523,161 @@ function renderSync(){
     </div>
   </section>`;
 }
+
+function getDateMinusDays(days){
+  const d = new Date();
+  d.setDate(d.getDate() - days + 1);
+  return d.toISOString().slice(0,10);
+}
+function getReportRangeDays(days=14){
+  const start = getDateMinusDays(days);
+  const map = {};
+  for(let i=0;i<days;i++){
+    const d = new Date(start);
+    d.setDate(d.getDate()+i);
+    const key = d.toISOString().slice(0,10);
+    map[key] = {date:key, pressure:[], sleep:[], meals:[], symptoms:[]};
+  }
+  state.pressure.forEach(x=>{ if(map[x.date]) map[x.date].pressure.push(x); });
+  state.sleep.forEach(x=>{ if(map[x.date]) map[x.date].sleep.push(x); });
+  state.meals.forEach(x=>{ if(map[x.date]) map[x.date].meals.push(x); });
+  state.symptoms.forEach(x=>{ if(map[x.date]) map[x.date].symptoms.push(x); });
+  return Object.values(map).sort((a,b)=>b.date.localeCompare(a.date));
+}
+function partOfDay(time=''){
+  const h = Number(String(time).slice(0,2));
+  if(Number.isNaN(h)) return 'без времени';
+  if(h < 12) return 'утро';
+  if(h < 18) return 'день';
+  return 'вечер';
+}
+function pressureLine(p){
+  const sys = Number(p.sys||0), dia = Number(p.dia||0);
+  const mark = (sys>=160 || dia>=100) ? 'bad' : ((sys>=140 || dia>=90) ? 'flag' : '');
+  return `<div class="${mark}">${escapeHtml(p.time||'--:--')} (${partOfDay(p.time)}): ${escapeHtml(p.sys||'—')}/${escapeHtml(p.dia||'—')}, пульс ${escapeHtml(p.pulse||'—')}${p.meds?`, лекарства: ${escapeHtml(p.meds)}`:''}${p.notes?`<br><span class="report-small">${escapeHtml(p.notes)}</span>`:''}</div>`;
+}
+function sleepLine(s){
+  return `<div>${escapeHtml(s.bedTime||'—')} → ${escapeHtml(s.wakeTime||'—')}; сонливость ${escapeHtml(s.daySleepiness||'—')}/10; храп: ${escapeHtml(s.snoring||'—')}; сухость: ${escapeHtml(s.dryMouth||'—')}${s.notes?`<br><span class="report-small">${escapeHtml(s.notes)}</span>`:''}</div>`;
+}
+function mealLine(m){
+  return `<div>${escapeHtml(m.meal||'')}: ${escapeHtml(m.product||'—')} ${m.grams?`(${escapeHtml(m.grams)} г)`:''}; ${calcMealCalories(m)} ккал${m.notes?`<br><span class="report-small">${escapeHtml(m.notes)}</span>`:''}</div>`;
+}
+function symptomLine(s){
+  return `<div>${escapeHtml(s.symptom||'—')}; сила ${escapeHtml(s.severity||'—')}/10; ${escapeHtml(s.duration||'')}${s.trigger?`; триггер: ${escapeHtml(s.trigger)}`:''}${s.notes?`<br><span class="report-small">${escapeHtml(s.notes)}</span>`:''}</div>`;
+}
+function reportSummary(days){
+  const allP = days.flatMap(d=>d.pressure);
+  const morningP = allP.filter(p=>partOfDay(p.time)==='утро');
+  const eveningP = allP.filter(p=>partOfDay(p.time)==='вечер');
+  const high = allP.filter(p=>Number(p.sys)>=140 || Number(p.dia)>=90);
+  const veryHigh = allP.filter(p=>Number(p.sys)>=160 || Number(p.dia)>=100);
+  const sleepy = days.flatMap(d=>d.sleep).filter(s=>Number(s.daySleepiness||0)>=7);
+  const symptoms = days.flatMap(d=>d.symptoms);
+  return {allP, morningP, eveningP, high, veryHigh, sleepy, symptoms};
+}
+function renderReport(){
+  const days = getReportRangeDays(14);
+  const sum = reportSummary(days);
+  return `<section class="card section">
+    <h2>Отчёт для врача</h2>
+    <p class="desc">Разбивка по дням за последние 14 дней: утреннее/вечернее давление, пульс, сонливость, самочувствие и питание.</p>
+
+    <div class="list">
+      <div class="entry">
+        <div class="entry-title">Краткая сводка за 14 дней</div>
+        <div class="entry-note">
+          Измерений давления: <b>${sum.allP.length}</b><br>
+          Утренних измерений: <b>${sum.morningP.length}</b><br>
+          Вечерних измерений: <b>${sum.eveningP.length}</b><br>
+          Выше 140/90: <b>${sum.high.length}</b><br>
+          Выше 160/100: <b>${sum.veryHigh.length}</b><br>
+          Дней/записей с сонливостью 7/10 и выше: <b>${sum.sleepy.length}</b><br>
+          Записей самочувствия: <b>${sum.symptoms.length}</b>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary" id="downloadDoctorReportBtn">Скачать отчёт HTML</button>
+        <button type="button" class="secondary" id="downloadDoctorCsvBtn">Скачать таблицу CSV</button>
+      </div>
+    </div>
+
+    ${days.map(d=>`
+      <div class="report-day">
+        <h3>${escapeHtml(d.date)}</h3>
+        <div class="report-grid">
+          <div class="report-block"><b>Давление и пульс</b>${d.pressure.length ? d.pressure.sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(pressureLine).join('') : '<span class="report-small">Нет измерений</span>'}</div>
+          <div class="report-block"><b>Сон / сонливость</b>${d.sleep.length ? d.sleep.map(sleepLine).join('') : '<span class="report-small">Нет записей сна</span>'}</div>
+          <div class="report-block"><b>Самочувствие</b>${d.symptoms.length ? d.symptoms.map(symptomLine).join('') : '<span class="report-small">Нет жалоб</span>'}</div>
+          <div class="report-block"><b>Еда</b>${d.meals.length ? d.meals.map(mealLine).join('') : '<span class="report-small">Нет записей еды</span>'}</div>
+        </div>
+      </div>`).join('')}
+  </section>`;
+}
+function buildDoctorReportHtml(){
+  const days = getReportRangeDays(14);
+  const sum = reportSummary(days);
+  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчёт Дениса за 14 дней</title>
+  <style>
+    body{font-family:Arial,sans-serif;color:#172033;line-height:1.45;padding:24px}
+    h1{margin-bottom:4px} .muted{color:#64748b}.day{border:1px solid #dbeafe;border-radius:12px;padding:12px;margin:12px 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.block{border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+    .bad{color:#dc2626;font-weight:bold}.flag{color:#b45309;font-weight:bold}
+    @media print{body{padding:0}.day{break-inside:avoid}}
+  </style></head><body>
+  <h1>Отчёт по здоровью Дениса за 14 дней</h1>
+  <div class="muted">Сформировано: ${new Date().toLocaleString('ru-RU')}</div>
+  <h2>Сводка</h2>
+  <p>Измерений давления: <b>${sum.allP.length}</b><br>
+  Утренних измерений: <b>${sum.morningP.length}</b><br>
+  Вечерних измерений: <b>${sum.eveningP.length}</b><br>
+  Выше 140/90: <b>${sum.high.length}</b><br>
+  Выше 160/100: <b>${sum.veryHigh.length}</b><br>
+  Записей с сонливостью 7/10 и выше: <b>${sum.sleepy.length}</b><br>
+  Записей самочувствия: <b>${sum.symptoms.length}</b></p>
+  ${days.map(d=>`<div class="day"><h2>${escapeHtml(d.date)}</h2><div class="grid">
+    <div class="block"><h3>Давление и пульс</h3>${d.pressure.length?d.pressure.sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(pressureLine).join(''):'Нет измерений'}</div>
+    <div class="block"><h3>Сон / сонливость</h3>${d.sleep.length?d.sleep.map(sleepLine).join(''):'Нет записей сна'}</div>
+    <div class="block"><h3>Самочувствие</h3>${d.symptoms.length?d.symptoms.map(symptomLine).join(''):'Нет жалоб'}</div>
+    <div class="block"><h3>Еда</h3>${d.meals.length?d.meals.map(mealLine).join(''):'Нет записей еды'}</div>
+  </div></div>`).join('')}
+  </body></html>`;
+}
+function buildDoctorCsv(){
+  const days = getReportRangeDays(14);
+  const rows = [['date','period','time','sys','dia','pulse','meds','pressure_notes','sleepiness','snoring','dry_mouth','symptoms','meals_kcal','meals']];
+  days.slice().reverse().forEach(d=>{
+    const pressures = d.pressure.length ? d.pressure : [{}];
+    pressures.forEach(p=>{
+      rows.push([
+        d.date,
+        p.time ? partOfDay(p.time) : '',
+        p.time || '',
+        p.sys || '',
+        p.dia || '',
+        p.pulse || '',
+        p.meds || '',
+        p.notes || '',
+        d.sleep.map(s=>s.daySleepiness||'').filter(Boolean).join('; '),
+        d.sleep.map(s=>s.snoring||'').filter(Boolean).join('; '),
+        d.sleep.map(s=>s.dryMouth||'').filter(Boolean).join('; '),
+        d.symptoms.map(s=>`${s.symptom||''} ${s.severity?`(${s.severity}/10)`:''}`).join('; '),
+        d.meals.reduce((a,m)=>a+calcMealCalories(m),0) || '',
+        d.meals.map(m=>`${m.meal||''}: ${m.product||''}`).join('; ')
+      ]);
+    });
+  });
+  return rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\\n');
+}
+function downloadTextFile(filename, text, type='text/plain'){
+  const blob = new Blob([text], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function renderDashboard(){
   const highPressure = state.pressure.filter(x => Number(x.sys)>=140 || Number(x.dia)>=90).length;
   const sleepy = state.sleep.filter(x => Number(x.daySleepiness||0)>=7).length;
@@ -603,6 +771,12 @@ function wireDynamic(){
 
   const loadCloudBtn = document.getElementById('loadCloudBtn');
   if(loadCloudBtn) loadCloudBtn.onclick = loadCloud;
+
+  const reportBtn = document.getElementById('downloadDoctorReportBtn');
+  if(reportBtn) reportBtn.onclick = () => downloadTextFile('denis-health-report-14-days.html', buildDoctorReportHtml(), 'text/html');
+
+  const csvBtn = document.getElementById('downloadDoctorCsvBtn');
+  if(csvBtn) csvBtn.onclick = () => downloadTextFile('denis-health-report-14-days.csv', buildDoctorCsv(), 'text/csv;charset=utf-8');
 }
 function bindForm(id, handler){
   const form = document.getElementById(id);

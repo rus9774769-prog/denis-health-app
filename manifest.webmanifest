@@ -2,7 +2,7 @@
   "name": "Denis Health",
   "short_name": "Denis Health",
   "description": "Упрощённое мобильное приложение для здоровья Дениса.",
-  "start_url": "./index.html?v=mobile2",
+  "start_url": "./index.html?v=mobile3",
   "display": "standalone",
   "background_color": "#f4f9ff",
   "theme_color": "#3b82f6",
